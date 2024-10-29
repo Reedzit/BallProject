@@ -3,6 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <QFile>
 #include <QDebug>
+#include <math.h>
 
 const char *vertexShaderSource = "#version 330 core\n"
                                  "layout (location = 0) in vec3 aPos;\n"
@@ -78,12 +79,7 @@ void SceneView::initializeGL()
 
     //setup vertex data and buffers and configurre vertex attributes
 
-    float vertices[] =
-    {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f,0.5f, 0.0f
-    };
+    std::vector<float> vertices = generateCircleVertices(0.0f,1.0f,0.5f, 100);
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -91,7 +87,7 @@ void SceneView::initializeGL()
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -102,6 +98,7 @@ void SceneView::initializeGL()
     //you can unbind the VAO afterwards so other VAO calls wont accidentally modify this VAO, but this rarely happens. Modifying other
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs nor VBOs when it is not directly necessary.
     glBindVertexArray(0);
+}
 }
 
 void SceneView::paintGL()
@@ -142,4 +139,21 @@ void SceneView::printContextInformation()
     // qPrintable() will print our QString w/o quotes around it.
     qDebug() << qPrintable(glType) << qPrintable(glVersion) << "(" << qPrintable(glProfile) << ")";
 }
+std::vector<float> SceneView::generateCircleVertices(float centerX, float centerY, float radius, int numberOfSegments)
+{
+    std::vector<float> vertices;
+    vertices.push_back(centerX);
+    vertices.push_back(centerY);
+    vertices.push_back(0.0f);
 
+    for (int i=0; i <= numberOfSegments; i++)
+    {
+        float theta{2.0f * Pi * float(i) / float(numberOfSegments)};
+        float x{radius * cos(theta)};
+        float y{radius * sin(theta)};
+        vertices.push_back(x + centerX);
+        vertices.push_back(y + centerY);
+        vertices.push_back(0.0f);
+    }
+    return vertices;
+}
