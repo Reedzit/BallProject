@@ -19,6 +19,7 @@ protected:
 private:
     void printContextInformation();
     unsigned int shaderProgram{0};
+    std::vector<float> generateCircleVertices(float centerX, float centerY, float radius, int numberOfSegments);
     unsigned int VBO{0};
     unsigned int VAO{0};
 };
