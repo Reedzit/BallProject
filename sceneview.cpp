@@ -109,7 +109,7 @@ void SceneView::paintGL()
     //draw the triangle
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO); // seeing as we only have a single VAO there is no need to bind it every time but we will do so to keep things organized.
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 102);
 }
 void SceneView::resizeGL(int width, int height)
 {
